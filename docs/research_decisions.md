@@ -43,7 +43,7 @@ The objective is to ensure reproducibility and transparency. Future researchers 
 
 **Decision:** Implement an Exchange Market Pressure (EMP) index as an alternative crisis measure.
 
-**Operationalization:** To be formalized after monthly exchange-rate and reserves data are acquired.
+**Operationalization:** To be formalized after monthly exchange-rate and reserves data are acquired. (Exchange rates now acquired — Decision 008. Still requires monthly reserves.)
 
 **Rationale:**
 - Captures currency pressure that may not result in ≥30% depreciation
@@ -52,7 +52,7 @@ The objective is to ensure reproducibility and transparency. Future researchers 
 
 **Use:** Robustness tests only (not primary results).
 
-**Status of implementation:** Pending (requires monthly FX reserves + exchange-rate data from IFS).
+**Status of implementation:** Pending (still requires monthly FX reserves; exchange rates done).
 
 ---
 
@@ -106,13 +106,13 @@ Target years (Y-1): 1974, 1980, 1986, 2001, 2012 → all months in those years g
 
 **Decision:** Two-source strategy split by frequency.
 - **Annual macro variables:** IMF World Economic Outlook (WEO) bulk file. See Decision 007.
-- **Monthly variables (exchange rates, reserves, interest rates, money):** IMF International Financial Statistics (IFS). Acquisition method still open — the IMF SDMX API was tested on 2026-09-03 and did not return data (new host `api.imf.org` returned HTTP 403; legacy host `dataservices.imf.org` no longer resolves). Fallback is manual download from data.imf.org.
+- **Monthly variables (exchange rates, reserves, interest rates, money):** IMF International Financial Statistics (IFS). The IMF SDMX API was tested on 2026-09-03 and did not return data (new host `api.imf.org` returned HTTP 403; legacy host `dataservices.imf.org` no longer resolves). Monthly exchange rates were therefore obtained via a documented IMF-IFS mirror (Decision 008). Remaining monthly variables (reserves, interest rates, money) still to be sourced.
 
 **Rationale:**
 - WEO is a single, well-documented bulk file covering all needed annual variables for our country set.
 - IFS is the standard source for monthly external-sector series and is required for both features and the EMP robustness measure.
 
-**Status:** Annual data DONE (Decision 007). Monthly data PENDING.
+**Status:** Annual data DONE (Decision 007). Monthly exchange rates DONE (Decision 008). Reserves / interest rates / money PENDING.
 
 ---
 
@@ -169,11 +169,39 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 008 — Monthly Exchange-Rate Data Source
+
+**Status:** Approved
+**Date:** September 3, 2026
+**Component:** Monthly feature data / target input
+
+**Source:** codeforIATI/imf-exchangerates — nightly scrape of IMF IFS exchange rates, consolidated CSV. Underlying source: IMF International Financial Statistics (`https://data.imf.org/en/datasets/IMF.STA:ER`). Attribution: "Source: International Monetary Fund."
+
+**Why a mirror:** The IMF SDMX API was non-functional when tested 2026-09-03 (new host returned HTTP 403; legacy host no longer resolves). The mirror is IMF data, properly attributed, and documented here for reproducibility. Preferred over manual portal download, which would be error-prone across 110+ countries. Using a cited mirror of a primary source is standard research practice.
+
+**Variable:** Monthly nominal exchange rate, domestic currency per US dollar.
+
+**Result:** 110 of 112 sample countries covered, 1990–2016, ~33,656 monthly observations.
+
+**Known gaps:** Iran (IRN) and Mauritania (MRT) — no usable historical exchange-rate data in this source for 1990–2016; they will lack an exchange-rate-based target.
+
+**Namibia note:** Namibia is reported under the South African rand (ZAR, blank country code) because the Namibian dollar is pegged 1:1 to the rand; patched to iso3 = NAM in ingestion. Its rate therefore moves identically to South Africa's.
+
+**Known issue for feature stage:** Several currencies redenominated (dropped zeros) during 1990–2016 — Angola, Brazil, Argentina, Turkey, DRC and others. This creates large artificial level breaks in the raw series; a "depreciation" across a redenomination is not a real market move and MUST be handled during feature engineering (not corrected in ingestion).
+
+**Implementation:** `src/data/ingest_exchange_rates.py`
+**Inputs:** `data/raw/imf_exchangerates_raw.csv`
+**Output:** `data/interim/exchange_rates_monthly.csv` (iso3, date, year, month, exchange_rate, currency)
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
 
 **Amendment A (2026-09-03):** Panel period revised from 1970 to 1990 (see Decision 005) — pre-1990 data coverage for emerging markets, especially post-Soviet/Yugoslav states, was too sparse to support a 1970 start.
+
+**Amendment B (2026-09-03):** Monthly exchange rates obtained via a documented IMF-IFS mirror rather than the IMF API or manual portal download, after the API was found non-functional (see Decisions 004 and 008).
 
 ---
 
@@ -187,5 +215,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 3, 2026
-**Version:** 1.1
+**Version:** 1.2
 **Maintained by:** Danial
