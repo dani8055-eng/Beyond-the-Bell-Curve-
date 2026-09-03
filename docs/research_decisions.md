@@ -52,7 +52,7 @@ The objective is to ensure reproducibility and transparency. Future researchers 
 
 **Use:** Robustness tests only (not primary results).
 
-**Status of implementation:** Pending (still requires monthly FX reserves; exchange rates done).
+**Status of implementation:** Pending (still requires monthly FX reserves; exchange rates done). Note: EMP will be built on the CLEANED depreciation series (Decision 010), since redenomination artifacts would otherwise corrupt the EMP exchange-rate component too.
 
 ---
 
@@ -187,7 +187,7 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 **Namibia note:** Namibia is reported under the South African rand (ZAR, blank country code) because the Namibian dollar is pegged 1:1 to the rand; patched to iso3 = NAM in ingestion. Its rate therefore moves identically to South Africa's.
 
-**Known issue for feature stage:** Several currencies redenominated (dropped zeros) during 1990–2016 — Angola, Brazil, Argentina, Turkey, DRC and others. This creates large artificial level breaks in the raw series; a "depreciation" across a redenomination is not a real market move and MUST be handled during feature engineering (not corrected in ingestion).
+**Known issue for feature stage:** Several currencies redenominated (dropped zeros) during 1990–2016. Handled in Decision 010.
 
 **Implementation:** `src/data/ingest_exchange_rates.py`
 **Inputs:** `data/raw/imf_exchangerates_raw.csv`
@@ -214,6 +214,27 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 010 — Exchange-Rate Structural-Break Handling (Depreciation)
+
+**Status:** Approved
+**Date:** September 3, 2026
+**Component:** Feature engineering (first step)
+
+**Problem:** Currency redenominations (dropping zeros) and dollarization (adopting the USD) create sudden STRENGTHENING of the raw exchange rate — the rate is divided by a large factor in one month. This is an accounting artifact, not a market move. A naive percent-change at that month (e.g. −99.995%) is meaningless and would poison volatility, skewness, kurtosis and tail features.
+
+**Decision (Method 1 — neutralize artifacts, keep real moves):** At any month where the rate falls to < 20% of the previous month (ratio < 0.2, i.e. a >5× sudden strengthening), set that month's depreciation to NaN. Large WEAKENING jumps (ratio > 1) are NOT touched — those are genuine currency crises / hyperinflations (e.g. Zimbabwe 2007–2008) and are exactly the tail events this project studies.
+
+**Why NaN, not splicing the levels:** Dollarization has no clean rescale factor (the currency ceases to exist), and a slightly-wrong splice fabricates a depreciation that never happened — worse than a missing value. The model consumes CHANGES, not continuous LEVELS, and the real moves around each break are already captured. If continuous level charts are wanted for the presentation layer, splicing may be done for VISUALIZATION ONLY, clearly labelled, and never fed into the model.
+
+**Why this is upstream of EMP:** EMP is computed from the same exchange-rate series (plus reserves), so it would inherit the same artifact. Cleaning here protects both the primary depreciation features and the future EMP robustness measure. (EMP addresses a different problem — crises concealed via reserve losses — and is complementary to, not a substitute for, this cleaning.)
+
+**Result:** 3 artifact months neutralized across 110 countries — Ecuador 2000-01 (dollarization), El Salvador 2001-01 (dollarization), Zimbabwe 2008-08 (redenomination). Depreciation available for 33,543 of 33,656 country-months. Zimbabwe's real hyperinflation (the +11,000%, +1.9m% weakening months) verified intact.
+
+**Implementation:** `src/features/compute_depreciation.py`
+**Output:** `data/interim/fx_depreciation_monthly.csv` (iso3, date, year, month, exchange_rate, depreciation, log_depreciation, is_structural_break)
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -236,5 +257,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 3, 2026
-**Version:** 1.3
+**Version:** 1.4
 **Maintained by:** Danial
