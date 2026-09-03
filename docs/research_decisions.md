@@ -235,6 +235,29 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 011 — Exchange-Rate Features (Conventional + Tail-Aware)
+
+**Status:** Approved
+**Date:** September 3, 2026
+**Component:** Feature engineering
+
+**Decision:** Build 21 monthly exchange-rate features on the cleaned depreciation series (Decision 010), in two explicitly-labelled groups matching the project's central experiment (conventional vs conventional+tail). Rolling windows: 3, 6, 12 months.
+
+**Conventional (10):** `dep_1m`; rolling mean, volatility, and cumulative depreciation over 3/6/12m.
+
+**Tail-aware (11):** rolling skewness (6/12m), excess kurtosis (6/12m), worst monthly move (6/12m), Expected Shortfall over the worst 10% (6/12m), and count of extreme months (depreciation > 10%) over 3/6/12m.
+
+**Look-ahead safety:** Every feature is a BACKWARD-LOOKING rolling window — a feature at month t uses only depreciation up to and including t. No future data enters any feature (Rule 4). This is what makes out-of-sample evaluation credible.
+
+**Design choices:** Distribution-shape stats (skew, kurtosis, ES) use only 6/12m windows (need enough points). Extreme threshold set at a fixed, economically-meaningful 10% monthly depreciation. Group membership is hard-coded (`CONVENTIONAL_FEATURES`, `TAIL_FEATURES`) so the conventional-vs-tail model comparison is a simple column swap.
+
+**Validation:** Turkey around its Feb-2001 crisis — tail features confirmed dormant in the calm pre-crisis months then spiking sharply at onset (skew −0.6 → +2.4; kurtosis −0.9 → +5.8; extreme count 0 → 3), demonstrating the features capture the tail behaviour the hypothesis concerns.
+
+**Implementation:** `src/features/build_fx_features.py`
+**Output:** `data/interim/fx_features.csv` (33,656 rows; 21 features)
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -257,5 +280,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 3, 2026
-**Version:** 1.4
+**Version:** 1.5
 **Maintained by:** Danial
