@@ -195,6 +195,25 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 009 — Primary Monthly Target (Option A)
+
+**Status:** Approved
+**Date:** September 3, 2026
+**Component:** Target variable construction
+
+**Rule:** Decision 003 applied to the monthly panel — a country's LV crisis in year Y labels all months of year Y-1 as target = 1; all else target = 0. The panel grid is defined by the monthly exchange-rate data (the country-months actually observed), so the target aligns row-for-row with the modelling data.
+
+**Why Option A (not month-pinned):** LV provides only the crisis year, not the month. Option A invents no crisis month and therefore carries zero contestable dating assumptions. A monthly-precise EMP-based target (built from exchange rates + reserves) is planned as the robustness definition once reserves are sourced (see Decision 002).
+
+**Result:** 33,656 country-months; 1,399 positive (4.16%); ~1 crisis-month per 24 non-crisis-months. 118 distinct crisis episodes captured in the 1990–2016 window; 81 of 110 countries have ≥1 positive label.
+
+**Honest sample note:** Of 227 in-sample LV crises, only 118 land inside the 1990–2016 window as usable positive labels. The remainder have target years before 1990 — a direct, expected consequence of the 1990 panel start (Decision 005) — and cannot be labelled because there is no data for those months. This 118 is the honest effective crisis count for the chosen window.
+
+**Implementation:** `src/data/build_target.py`
+**Output:** `data/interim/monthly_target.csv` (iso3, date, year, month, target)
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -202,6 +221,8 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 **Amendment A (2026-09-03):** Panel period revised from 1970 to 1990 (see Decision 005) — pre-1990 data coverage for emerging markets, especially post-Soviet/Yugoslav states, was too sparse to support a 1970 start.
 
 **Amendment B (2026-09-03):** Monthly exchange rates obtained via a documented IMF-IFS mirror rather than the IMF API or manual portal download, after the API was found non-functional (see Decisions 004 and 008).
+
+**Amendment C (2026-09-03):** Primary monthly target built via Option A (Decision 009). A monthly EMP-based target was chosen (over a month-pinning heuristic) as the robustness definition, to be built once FX reserves are sourced — giving monthly timing precision via a principled economic index rather than an arbitrary dating rule.
 
 ---
 
@@ -215,5 +236,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 3, 2026
-**Version:** 1.2
+**Version:** 1.3
 **Maintained by:** Danial
