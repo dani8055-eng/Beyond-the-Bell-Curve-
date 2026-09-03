@@ -258,6 +258,25 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 012 — Modelling Table Assembly & Macro Lag
+
+**Status:** Approved
+**Date:** September 3, 2026
+**Component:** Feature assembly / look-ahead prevention
+
+**Decision:** Join the target, the 21 exchange-rate features, and the 11 annual macro variables into one country-month modelling table. Monthly FX features are real-time and enter with NO artificial lag. Annual WEO macro is LAGGED 2 YEARS: a year-Y macro value becomes visible to the model only from calendar year Y+2 onward.
+
+**Why lag the macro (and why 2 years):** Annual macro is published in arrears and later revised — e.g. 2025 GDP is not released until ~mid-2026. A naive join (or a 1-year lag) would place a not-yet-published figure into early-year rows, letting the model use data that did not exist at prediction time. This is a look-ahead leak AND a data-misplacement that inflates test performance and breaks in real deployment. A 2-year lag guarantees the figure was genuinely published (and mostly revision-settled) before the model sees it, for every row, with margin. A flat 2-year lag is used as a transparent, defensible proxy for true per-country publication dates (which are not in the data). The project's star features — real-time FX tail measures — are unaffected by this lag, so the cost (slightly staler macro context) is small and honest.
+
+**Look-ahead verification:** Confirmed on Argentina — its 2001 crisis-year GDP growth (−4.41) is not visible in the table until 2003 rows; in year Y the model sees only year-(Y−2) macro. This is the single most important leakage check in the project and it passes.
+
+**Result:** 33,656 country-months × (21 FX + 11 macro features + target). Target positive rate preserved at 4.16%. Macro is null for 1990–1991 by design (earliest macro 1990 → usable 1992); 30,750 rows carry macro; 32,306 rows carry all FX features. Missing-feature handling (drop vs impute) deferred to the modelling stage.
+
+**Implementation:** `src/features/build_modelling_table.py`
+**Output:** `data/interim/modelling_table.csv`
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -280,5 +299,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 3, 2026
-**Version:** 1.5
+**Version:** 1.6
 **Maintained by:** Danial
