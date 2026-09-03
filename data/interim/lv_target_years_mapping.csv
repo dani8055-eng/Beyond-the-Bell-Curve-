@@ -1,0 +1,240 @@
+country,target_year,has_positive_target
+Albania,1996,True
+Algeria,1987,True
+Algeria,1993,True
+Angola,1990,True
+Angola,1995,True
+Angola,2014,True
+Argentina,1974,True
+Argentina,1980,True
+Argentina,1986,True
+Argentina,2001,True
+Argentina,2012,True
+Azerbaijan,2014,True
+Bangladesh,1975,True
+Belarus,1996,True
+Belarus,2008,True
+Belarus,2014,True
+Benin,1993,True
+Bolivia,1972,True
+Bolivia,1980,True
+Botswana,1983,True
+Brazil,1975,True
+Brazil,1981,True
+Brazil,1986,True
+Brazil,1991,True
+Brazil,1998,True
+Brazil,2014,True
+Bulgaria,1995,True
+Burkina Faso,1993,True
+Cambodia,1970,True
+Cambodia,1991,True
+Cameroon,1993,True
+Central African Rep.,1993,True
+Chad,1993,True
+Chile,1971,True
+Chile,1981,True
+Colombia,1984,True
+Comoros,1993,True
+"Congo, Dem. Rep. of",1975,True
+"Congo, Dem. Rep. of",1982,True
+"Congo, Dem. Rep. of",1988,True
+"Congo, Dem. Rep. of",1993,True
+"Congo, Dem. Rep. of",1998,True
+"Congo, Dem. Rep. of",2008,True
+"Congo, Dem. Rep. of",2015,True
+"Congo, Rep. of",1993,True
+Costa Rica,1980,True
+Costa Rica,1990,True
+Côte d’Ivoire,1993,True
+Dominican Republic,1984,True
+Dominican Republic,1989,True
+Dominican Republic,2002,True
+Ecuador,1981,True
+Ecuador,1998,True
+Egypt,1978,True
+Egypt,1989,True
+Egypt,2015,True
+El Salvador,1985,True
+Equatorial Guinea,1979,True
+Equatorial Guinea,1993,True
+Estonia,1991,True
+Ethiopia,1992,True
+Fiji,1997,True
+Finland,1992,True
+Gabon,1993,True
+"Gambia, The",1984,True
+"Gambia, The",2002,True
+Georgia,1991,True
+Georgia,1998,True
+Ghana,1977,True
+Ghana,1982,True
+Ghana,1992,True
+Ghana,1999,True
+Ghana,2008,True
+Ghana,2013,True
+Greece,1982,True
+Guatemala,1985,True
+Guinea,1981,True
+Guinea,2004,True
+Guinea-Bissau,1979,True
+Guinea-Bissau,1993,True
+Guyana,1986,True
+Haiti,1991,True
+Haiti,2002,True
+Honduras,1989,True
+Iceland,1974,True
+Iceland,1980,True
+Iceland,1988,True
+Iceland,2007,True
+Indonesia,1978,True
+Indonesia,1997,True
+"Iran, I.R. of",1984,True
+"Iran, I.R. of",1992,True
+"Iran, I.R. of",1999,True
+"Iran, I.R. of",2012,True
+Israel,1974,True
+Israel,1979,True
+Israel,1984,True
+Italy,1980,True
+Jamaica,1977,True
+Jamaica,1982,True
+Jamaica,1990,True
+Jordan,1988,True
+Kazakhstan,1998,True
+Kazakhstan,2014,True
+Kenya,1992,True
+Korea,1997,True
+Kyrgyz Republic,1996,True
+Lao People’s Dem. Rep.,1971,True
+Lao People’s Dem. Rep.,1977,True
+Lao People’s Dem. Rep.,1985,True
+Lao People’s Dem. Rep.,1996,True
+Latvia,1991,True
+Lebanon,1983,True
+Lebanon,1989,True
+Lesotho,1984,True
+Lesotho,2014,True
+Libya,2001,True
+Lithuania,1991,True
+Madagascar,1983,True
+Madagascar,1993,True
+Madagascar,2003,True
+Malawi,1993,True
+Malawi,2011,True
+Malaysia,1997,True
+Maldives,1974,True
+Mali,1993,True
+Mauritania,1992,True
+Mexico,1976,True
+Mexico,1981,True
+Mexico,1994,True
+Moldova,1998,True
+Mongolia,1989,True
+Mongolia,1996,True
+Morocco,1980,True
+Mozambique,1986,True
+Mozambique,2014,True
+Myanmar,1974,True
+Myanmar,1989,True
+Myanmar,1995,True
+Myanmar,2000,True
+Myanmar,2006,True
+Myanmar,2011,True
+Namibia,1983,True
+Namibia,2014,True
+Nepal,1983,True
+Nepal,1991,True
+New Caledonia,1980,True
+New Zealand,1983,True
+Nicaragua,1978,True
+Nicaragua,1984,True
+Nicaragua,1989,True
+Niger,1993,True
+Nigeria,1982,True
+Nigeria,1988,True
+Nigeria,1996,True
+Nigeria,2015,True
+Pakistan,1971,True
+Papua New Guinea,1994,True
+Paraguay,1983,True
+Paraguay,1988,True
+Paraguay,2001,True
+Peru,1975,True
+Peru,1980,True
+Peru,1987,True
+Philippines,1982,True
+Philippines,1997,True
+Portugal,1982,True
+Romania,1995,True
+Russia,1997,True
+Russia,2013,True
+Rwanda,1990,True
+Senegal,1993,True
+"Serbia, Republic of",1999,True
+Seychelles,2007,True
+Sierra Leone,1982,True
+Sierra Leone,1988,True
+Sierra Leone,1997,True
+South Africa,1983,True
+South Africa,2014,True
+South Sudan,2014,True
+Spain,1982,True
+Sri Lanka,1977,True
+Sudan,1980,True
+Sudan,1987,True
+Sudan,1992,True
+Sudan,2011,True
+Suriname,1989,True
+Suriname,1994,True
+Suriname,2000,True
+Suriname,2015,True
+Swaziland,1984,True
+Swaziland,2014,True
+Sweden,1992,True
+Syrian Arab Republic,1987,True
+São Tomé and Principe,1986,True
+São Tomé and Principe,1991,True
+São Tomé and Principe,1996,True
+Tajikistan,1998,True
+Tajikistan,2014,True
+Tanzania,1984,True
+Tanzania,1989,True
+Thailand,1997,True
+Togo,1993,True
+Trinidad and Tobago,1985,True
+Turkey,1977,True
+Turkey,1983,True
+Turkey,1990,True
+Turkey,1995,True
+Turkey,2000,True
+Turkmenistan,2007,True
+Uganda,1979,True
+Uganda,1987,True
+Ukraine,1997,True
+Ukraine,2008,True
+Ukraine,2013,True
+Uruguay,1971,True
+Uruguay,1982,True
+Uruguay,1989,True
+Uruguay,2001,True
+Uzbekistan,1999,True
+Venezuela,1983,True
+Venezuela,1988,True
+Venezuela,1993,True
+Venezuela,2001,True
+Venezuela,2009,True
+Vietnam,1971,True
+Vietnam,1980,True
+Vietnam,1986,True
+Yemen,1984,True
+Yemen,1994,True
+Zambia,1982,True
+Zambia,1988,True
+Zambia,1995,True
+Zambia,2008,True
+Zambia,2014,True
+Zimbabwe,1982,True
+Zimbabwe,1990,True
+Zimbabwe,1997,True
+Zimbabwe,2002,True
