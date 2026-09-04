@@ -342,6 +342,25 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 015 — Robustness of the Tail-Feature Finding
+
+**Status:** Approved
+**Date:** September 4, 2026
+**Component:** Modelling / robustness
+
+**Question:** Is "tail features improve crisis prediction" a real, reliable effect or an artifact of sampling luck? Tested on the best model (Logistic Regression, largest tail effect), both feature sets evaluated on the SAME test rows.
+
+**Check 1 — per-year breakdown:** Tail features helped in 9 of 12 test years that contained crises; the other 3 years showed differences of essentially zero (largest −0.003), and no year showed a clear decline. The largest gains fell in the most crisis-heavy years (2007 +0.047, 2014 +0.035), which is economically sensible.
+
+**Check 2 — bootstrap (1000 resamples of pooled OOS predictions):** Observed pooled benefit +0.0099 (conv 0.030 → conv+tail 0.040). Bootstrap mean +0.0103, 95% range +0.0060 to +0.0154, and tail features helped in 100% of 1000 resamples — the benefit never turned negative.
+
+**Conclusion:** The tail-feature improvement is SMALL but RELIABLE. It is consistent across time (most years) and across resampling (every resample), so it is signal, not noise — while remaining modest in absolute size. Honest framing: "tail-risk features give a small but statistically reliable improvement to a fundamentally hard prediction problem."
+
+**Implementation:** `src/models/run_robustness.py`
+**Outputs:** `outputs/robustness_per_year.csv`, `outputs/robustness_bootstrap.csv`
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -364,5 +383,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 4, 2026
-**Version:** 1.8
+**Version:** 1.9
 **Maintained by:** Danial
