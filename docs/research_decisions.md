@@ -319,6 +319,29 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 014 — XGBoost Tuning (Fair-Comparison Result)
+
+**Status:** Approved
+**Date:** September 4, 2026
+**Component:** Modelling
+
+**Why:** In Decision 013, default XGBoost performed worst of the three models. Before concluding "complexity doesn't help," XGBoost had to be given a fair, tuned shot.
+
+**Method (leak-free, time-aware tuning):** A 48-combination grid over max_depth, learning_rate, n_estimators, min_child_weight, reg_lambda (subsample/colsample fixed) was searched using a TIME-BASED split — train on years ≤ 2009, select on validation years 2010–2013 — so the 2014–2016 test years never influenced tuning. Random/shuffled CV was deliberately NOT used, as it would reintroduce look-ahead leakage. The tuned model was then re-run through the full walk-forward (2002–2016).
+
+**Result:** Tuning did NOT rescue XGBoost. Best validation PR-AUC across the whole grid was 0.0186 — below the base rate. Tuned walk-forward: Conventional 0.023 → Conv+Tail 0.026 (tail effect +12%), essentially unchanged from default XGBoost (0.025 → 0.027) and still near the base rate (ROC-AUC ~0.48–0.52). Best tuned params: max_depth 4, learning_rate 0.1, n_estimators 400, min_child_weight 5, reg_lambda 5.0.
+
+**Interpretation:** Given a fair, properly-tuned shot, the most flexible model still cannot beat the simple linear one. The likely cause is data scarcity in the positive class (~600 crisis-months, noisy and heterogeneous) — flexible models overfit patterns that do not generalise out-of-sample. This strengthens H3: model complexity does not automatically help for rare extreme events. Across ALL five model runs, the best performer remains Logistic Regression + tail features (PR-AUC 0.040) — the simplest model with the tail twist.
+
+**Standing finding:** "Simple model + tail-risk features beats brute-force complexity for predicting rare currency crises." Tail effect is positive in every model (Logistic +33%, RF +7%, default XGB +7%, tuned XGB +12%) — consistent direction, modest size. Absolute PR-AUC remains low throughout; framing is "tail features modestly and consistently help a fundamentally hard problem," not "crisis prediction solved."
+
+**Next:** statistical robustness (bootstrap / per-fold spread) to test whether the consistent tail effect is signal vs noise — needs no new data. Then EMP-based definitional robustness — blocked on sourcing FX reserves.
+
+**Implementation:** `src/models/tune_xgboost.py`
+**Output:** `outputs/xgb_tuning_results.csv`
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -341,5 +364,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 4, 2026
-**Version:** 1.7
+**Version:** 1.8
 **Maintained by:** Danial
