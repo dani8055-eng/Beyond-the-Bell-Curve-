@@ -277,6 +277,48 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 006 — Train/Test Split Strategy (RESOLVED)
+
+**Status:** Approved
+**Date:** September 4, 2026
+**Component:** Modelling / validation
+
+**Decision:** Walk-forward (expanding-window) validation only. For each test year, train on all years strictly before it, predict that year, then expand and step forward. Predictions are POOLED across all test years and scored once (appropriate for rare events — individual years may contain few or zero crises). First test year 2002 (earlier years reserved to give the first training window enough crises); test years 2002–2016.
+
+**Why:** A random split would let the model train on the future to predict the past — the same look-ahead leak avoided elsewhere. Walk-forward mirrors real-time deployment (retrain as data arrives, forecast the next period) and is the standard for early-warning systems. A single time split was considered and rejected in favour of the more rigorous walk-forward.
+
+**Primary metric:** PR-AUC (precision-recall area under curve), appropriate for a rare positive class. ROC-AUC and lift-over-base-rate reported alongside. Accuracy is NOT used.
+
+---
+
+## Decision 013 — Baseline Modelling Setup & First Results
+
+**Status:** Approved
+**Date:** September 4, 2026
+**Component:** Modelling
+
+**Setup:** Three model families — Logistic Regression (linear baseline), Random Forest, XGBoost — each run on three feature sets: Conventional(+macro), Conventional+Tail(+macro), Tail(+macro). Class imbalance handled via balanced class weights (logistic, RF) and scale_pos_weight (XGBoost). Missing values handled by dropping incomplete rows (baseline choice; imputation / native-missing deferred as refinements). Scaling (logistic) fit on training folds only.
+
+**Missing-data note:** Dropping incomplete rows reduced the usable sample from 33,656 to ~20,600 country-months and the positive rate from 4.16% to ~2.6% (~600 crisis-months), because warm-up months and 1990–91 (dropped by the 2-year macro lag) carried some crisis labels. Honest, documented cost of the drop-rows choice.
+
+**First results (walk-forward, pooled OOS PR-AUC; base rate ~2.56%):**
+- Logistic: Conventional 0.030 → Conv+Tail 0.040 (tail effect +33%)
+- Random Forest: Conventional 0.033 → Conv+Tail 0.036 (tail effect +7%)
+- XGBoost: Conventional 0.025 → Conv+Tail 0.027 (tail effect +7%)
+
+**Preliminary findings (tentative, not yet robustness-tested):**
+1. All models sit only modestly above the base rate — conventional crisis prediction is genuinely weak (supports H1).
+2. Tail features improved PR-AUC in every model — consistent directional support for H2, though modest.
+3. The tail benefit is large for the linear model (+33%) and small for the nonlinear models (+7%), suggesting flexible models can partly reconstruct tail behaviour from conventional features themselves.
+4. XGBoost, the most complex model, performed WORST (near base rate) — almost certainly under-tuned on this rare, small-positive dataset. To be re-tested after tuning before any conclusion. This echoes H3 (complexity does not automatically help for rare extreme events).
+
+**Caveat:** These are first-pass results with near-default hyperparameters and no uncertainty quantification. Next steps: tune XGBoost for a fair comparison, then bootstrap/per-fold spread to test whether the tail effect is signal or noise, then feature importance.
+
+**Implementation:** `src/models/run_core_experiment.py`
+**Output:** `outputs/model_results.csv`
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -298,6 +340,6 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
-**Last updated:** September 3, 2026
-**Version:** 1.6
+**Last updated:** September 4, 2026
+**Version:** 1.7
 **Maintained by:** Danial
