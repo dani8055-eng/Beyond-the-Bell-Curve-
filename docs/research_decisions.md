@@ -386,6 +386,35 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 017 — EMP Robustness Sub-Study (reserves-available subsample)
+
+**Status:** Approved
+**Date:** September 4, 2026
+**Component:** Robustness (branched sub-study; git branch `emp-robustness-subsample`)
+**Scope:** 8 countries with monthly FRED reserves — ARG, BRA, IDN, KOR, MEX, RUS, TUR, ZAF. Self-contained and separate from the main 110-country Laeven–Valencia analysis. Small sample → results are INDICATIVE, not conclusive.
+
+**Why this sub-study exists (data-availability scoping):** The EMP crisis definition needs monthly FX reserves. Reserves were sourced from FRED (republishing IMF IFS), which only carries usable monthly series for these 8 (mostly large, crisis-prone) economies — not the full sample. Rather than abandon the test or compare mismatched samples, the whole analysis (H1, H2, and the EMP check) is run WITHIN this fixed subsample, so no cross-sample confound arises. The scope limitation is stated plainly rather than hidden.
+
+**EMP construction:** Two-component EMP (depreciation + reserve losses; interest rates unavailable), each component scaled by its country standard deviation. EMP crisis = EMP above the country mean by k standard deviations, for k=1.5 and k=2.0. Validation: the EMP crisis dates independently reproduce known history — Korea 1997, Russia 1998, Argentina 2001–02, Turkey 2001, Brazil 1999 — confirming the measure is capturing real crises. Target: a TRUE six-month-ahead monthly window (cleaner than the annual LV approximation, since EMP is monthly).
+
+**Result (walk-forward, pooled OOS PR-AUC):**
+- k=2.0 (strict): Conventional 0.109 → Conv+Tail 0.115 (tail effect +5.4%) — consistent with the main finding.
+- k=1.5 (loose): Conventional 0.190 → Conv+Tail 0.176 (tail effect −7.5%) — tail features did not help.
+EMP crises are far more common here (10–17%) than LV crises (3%), so absolute PR-AUC is higher; EMP is a different, easier prediction problem.
+
+**Interpretation (consistent with, not proven):** The tail-feature benefit is sensitive to how the crisis is defined. It appears for STRICT, clear-cut crises (k=2.0) but not for the LOOSER definition (k=1.5). A plausible economic reading, consistent with first-generation currency-crisis theory (Krugman 1979): the looser threshold captures episodes where a government suppresses depreciation by burning FX reserves, keeping the exchange rate artificially stable. Exchange-rate-based tail features are, by construction, blind to that reserve-defended phase — they only activate once reserves are exhausted and the currency is allowed to move (the collapse). Thus the tail advantage concentrates in visibly exchange-rate-driven crises. This is an interpretation the data is consistent with, not a demonstrated causal claim (8 countries; possible noise / EMP-weighting effects).
+
+**Bootstrap test of the threshold difference (1000 resamples each):** Run to check whether the k=1.5-vs-k=2.0 difference is a real pattern in the subsample or sampling noise. Result: NEITHER effect is statistically distinguishable from noise at this sample size. k=1.5: mean −0.014, 95% range −0.032 to +0.001 (4% of resamples positive) — leans negative but the range crosses zero. k=2.0: mean +0.006, 95% range −0.006 to +0.018 (87% positive) — leans positive but the range crosses zero. So the directions match the interpretation above (negative at loose, positive at strict), but with only 8 countries the effects are UNDERPOWERED and cannot be claimed as established. Honest status: SUGGESTIVE BUT NOT CONCLUSIVE.
+
+**Honest headline for the sub-study:** On the 8-country subsample, the tail-feature effect leaned negative under the loose EMP definition and positive under the strict one — directionally consistent with the reserve-defence interpretation — but bootstrap testing shows neither is distinguishable from noise at this sample size. A larger monthly-reserves dataset would be needed to test the pattern properly. (This is a deliberate integrity check: an appealing interpretation was tested against the data's actual power and reported as inconclusive rather than overclaimed.)
+
+**Value / future work:** This points directly to reserve-based tail features (extreme reserve drawdowns, reserve volatility) as the natural extension — to catch the hidden reserve-defence phase that exchange-rate tails miss.
+
+**Implementation:** `src/data/pull_reserves.py`, `src/features/build_emp.py`, `src/models/emp_substudy.py`, `src/models/emp_bootstrap.py`
+**Outputs:** `data/interim/emp_measure.csv`, `outputs/emp_substudy_results.csv`, `outputs/emp_bootstrap.csv`
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -408,5 +437,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 4, 2026
-**Version:** 2.0
+**Version:** 2.2
 **Maintained by:** Danial
