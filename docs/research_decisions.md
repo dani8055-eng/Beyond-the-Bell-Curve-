@@ -361,6 +361,31 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 
 ---
 
+## Decision 016 — Feature Importance (Cornerstone Finding)
+
+**Status:** Approved
+**Date:** September 4, 2026
+**Component:** Modelling / interpretation
+
+**Question:** Which features actually drive the model's crisis predictions — does it rely on the tail-risk features, or ignore them?
+
+**Method:** Two views on the best model (Logistic Regression), trained on years ≤ 2009, evaluated on 2010–2016 (time-based, no look-ahead).
+1. Standardized coefficients — reported as CONTEXT only. Misleading here because the depreciation features are highly correlated (near-duplicates), so the crude coefficient view over-credits conventional features.
+2. Permutation importance (HEADLINE) — shuffle each feature to noise and measure the drop in PR-AUC. Robust to correlation because it measures each feature's UNIQUE contribution (duplicated features score low, as their copies cover for them). 20 shuffles averaged.
+
+**Result (permutation, base PR-AUC 0.038):** Of all positive predictive importance, TAIL features carry ~52%, macro ~28%, conventional ~20%. The strongest individual exchange-rate features are skewness (dep_skew_6m/12m) and extreme-move counts (extreme_count_*) — i.e. the tail-risk measures. Conventional features individually score low precisely because they are redundant with one another, not because currency dynamics are irrelevant.
+
+**Interpretation (cornerstone):** When importance is measured by actual predictive contribution, tail-risk features carry the MAJORITY of the useful crisis signal — more than conventional or macro indicators. This is direct support for the project's central, Taleb-inspired hypothesis: information about impending crises is disproportionately concentrated in the tails (extreme, rare moves), not in conventional averages.
+
+**Caveats to keep attached (non-negotiable for honest reporting):**
+1. Absolute predictive skill remains modest (PR-AUC ~0.04). The claim is "tail features are the most useful ingredients in a hard problem," NOT "tail features predict crises well."
+2. One dataset, one crisis definition (Laeven–Valencia), one model family. Generalisation is open — motivating the planned EMP definitional-robustness test.
+
+**Implementation:** `src/models/feature_importance.py`
+**Outputs:** `outputs/feature_importance_coef.csv`, `outputs/feature_importance_permutation.csv`
+
+---
+
 # Amendment Log
 
 *If a decision is revised, amendments are logged below with the original decision retained above.*
@@ -383,5 +408,5 @@ To be completed during the modelling phase. Must respect the look-ahead rule (Ru
 ---
 
 **Last updated:** September 4, 2026
-**Version:** 1.9
+**Version:** 2.0
 **Maintained by:** Danial
